@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Vẽ 1 Nét - Học Vẽ Đơn Giản</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      * { box-sizing: border-box; }
+      :root{
+        --bg:#F4F1EA; --paper:#FFFFFF; --paper2:#FBF8F1; --ink:#2E2A24; --ink-soft:#6B645A;
+        --line:#E4DCCB; --accent:#E4572E; --accent-ink:#FFFFFF; --teal:#0E7C66; --teal-soft:#DFF2EC;
+        --sun:#F2A007; --sun-soft:#FDEECB; --sky:#2D7FB8; --pink:#D65076;
+        --guide:#B9AE97; --shadow:0 2px 10px rgba(46,42,36,.08);
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#1C1A17; --paper:#292520; --paper2:#231F1B; --ink:#F2EBDD; --ink-soft:#B4AB9A;
+          --line:#453E34; --accent:#F0714A; --teal:#3DB894; --teal-soft:#1E3A32;
+          --sun:#F5B93F; --sun-soft:#40351A; --sky:#5FA8D3; --pink:#E87A9C;
+          --guide:#7A7261; --shadow:0 2px 10px rgba(0,0,0,.35);
+        }
+      }
+      html{ -webkit-text-size-adjust:100%; }
+      body{
+        margin:0; background:var(--bg); color:var(--ink);
+        font-family:"Be Vietnam Pro", system-ui, sans-serif; font-size:16px; line-height:1.5;
+      }
+      .wrap{ max-width:640px; margin:0 auto; padding:14px 14px 40px; }
+      h1,h2,h3{ font-family:"Baloo 2","Be Vietnam Pro",sans-serif; margin:0; line-height:1.2; }
+
+      /* Tabs */
+      .tabs{
+        display:flex; gap:6px; background:var(--paper); border:2px solid var(--line);
+        border-radius:16px; padding:6px; box-shadow:var(--shadow);
+      }
+      .tab{
+        flex:1; border:0; border-radius:11px; background:transparent; color:var(--ink-soft);
+        font-family:"Baloo 2",sans-serif; font-weight:700; font-size:16px; padding:10px 4px; cursor:pointer;
+        min-height:48px;
+      }
+      .tab[aria-selected="true"]{ background:var(--accent); color:var(--accent-ink); }
+      .tab:focus-visible, button:focus-visible{ outline:3px solid var(--sky); outline-offset:2px; }
+      [hidden]{ display:none !important; }
+
+      /* Sub-mode toggle (Tab Học Vẽ: 2 phần) */
+      .subtabs{
+        display:flex; gap:6px; margin-top:12px; background:var(--paper2);
+        border:2px solid var(--line); border-radius:13px; padding:5px;
+      }
+      .subtab{
+        flex:1; border:0; border-radius:9px; background:transparent; color:var(--ink-soft);
+        font-family:"Baloo 2",sans-serif; font-weight:700; font-size:14.5px; padding:9px 6px; cursor:pointer;
+        min-height:44px;
+      }
+      .subtab[aria-pressed="true"]{ background:var(--teal); color:#fff; }
+
+      .howto{
+        margin:14px 2px 0; color:var(--ink-soft); font-size:15px;
+      }
+      .howto strong{ color:var(--ink); }
+
+      /* Level / figure pickers */
+      .picker{ display:grid; grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); gap:8px; margin-top:12px; }
+      .pick{
+        border:2px solid var(--line); background:var(--paper); border-radius:13px; padding:8px 6px 7px;
+        cursor:pointer; text-align:center; color:var(--ink); font-family:inherit;
+      }
+      .pick .nm{ display:block; font-weight:600; font-size:13.5px; line-height:1.25; }
+      .pick .meta{ display:block; font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
+      .pick .st{ display:block; font-size:12px; color:var(--sun); letter-spacing:2px; min-height:16px; margin-top:2px; }
+      .pick .st.none{ color:var(--guide); letter-spacing:0; font-size:11.5px; }
+      .pick[aria-current="true"]{ border-color:var(--accent); background:var(--sun-soft); }
+      .pick:disabled{ opacity:.55; cursor:not-allowed; background:var(--paper2); }
+      .pick:disabled svg{ opacity:.5; }
+      .pick svg{ display:block; margin:0 auto 4px; }
+
+      /* HUD */
+      .hud{
+        display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;
+      }
+      .hud .cell{
+        flex:1 1 100px; background:var(--paper); border:2px solid var(--line); border-radius:12px;
+        padding:7px 10px; text-align:center;
+      }
+      .hud .k{ display:block; font-size:11.5px; color:var(--ink-soft); font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+      .hud .v{ display:block; font-family:"Baloo 2",sans-serif; font-weight:800; font-size:20px; line-height:1.2; }
+
+      /* Board */
+      .board-card{
+        position:relative; margin-top:12px; background:var(--paper);
+        background-image:radial-gradient(var(--line) 1.1px, transparent 1.2px);
+        background-size:22px 22px; background-position:center;
+        border:2px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden;
+      }
+      .board-card svg{ display:block; width:100%; height:auto; touch-action:none; }
+      .board-card canvas{ display:block; width:100%; height:auto; touch-action:none; cursor:crosshair; }
+
+      /* (Phần 2 của tab Học Vẽ giờ vẽ trên 1 bảng như Phần 1 — không còn layout 2 ô) */
+
+      /* Score box */
+      .score-box{
+        margin-top:12px; background:var(--paper); border:2px solid var(--teal); border-radius:14px;
+        padding:12px 16px; display:none; align-items:center; gap:16px; flex-wrap:wrap;
+      }
+      .score-box.show{ display:flex; }
+      .score-box .num{ font-family:"Baloo 2",sans-serif; font-weight:800; font-size:44px; line-height:1; color:var(--teal); }
+      .score-box .num small{ font-size:17px; color:var(--ink-soft); font-weight:700; }
+      .score-box .detail{ flex:1 1 220px; }
+      .score-box .detail .stars{ color:var(--sun); font-size:21px; letter-spacing:3px; line-height:1.2; }
+      .score-box .detail .stars .off{ color:var(--line); }
+      .score-box .detail p{ margin:2px 0 0; font-size:14.5px; color:var(--ink-soft); }
+      .score-box .detail p strong{ color:var(--ink); }
+
+      /* Controls */
+      .controls{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+      .btn{
+        border:2px solid var(--line); background:var(--paper); color:var(--ink); border-radius:12px;
+        font-family:"Baloo 2",sans-serif; font-weight:700; font-size:15.5px; padding:9px 14px; cursor:pointer;
+        min-height:46px; flex:1 1 auto;
+      }
+      .btn.primary{ background:var(--teal); border-color:var(--teal); color:#fff; }
+      .btn.warn{ background:var(--sun-soft); border-color:var(--sun); color:var(--ink); }
+      .btn:active{ transform:translateY(1px); }
+      .btn:disabled{ opacity:.45; cursor:default; transform:none; }
+
+      .msg{
+        margin-top:12px; background:var(--teal-soft); border-radius:12px; padding:10px 14px;
+        font-size:15px; min-height:48px; display:flex; align-items:center;
+      }
+      .msg.bad{ background:var(--sun-soft); }
+
+      /* Win / done overlay */
+      .overlay{
+        position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+        background:color-mix(in srgb, var(--paper) 88%, transparent); padding:18px; z-index:5;
+      }
+      .overlay.show{ display:flex; }
+      .overlay .box{ text-align:center; max-width:340px; }
+      .overlay .stars{ font-size:44px; letter-spacing:6px; color:var(--sun); line-height:1; }
+      .overlay .stars .off{ color:var(--line); }
+      .overlay h2{ font-size:27px; margin:8px 0 4px; }
+      .overlay p{ margin:0 0 14px; color:var(--ink-soft); }
+      .overlay .row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+      .overlay .row .btn{ flex:0 1 auto; }
+
+      /* Free draw toolbar */
+      .toolbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
+      .swatches{ display:flex; gap:7px; flex-wrap:wrap; }
+      .sw{
+        width:40px; height:40px; border-radius:50%; border:3px solid var(--paper); cursor:pointer; padding:0;
+        box-shadow:0 0 0 2px var(--line);
+      }
+      .sw[aria-pressed="true"]{ box-shadow:0 0 0 3px var(--ink); }
+      .sizes{ display:flex; gap:7px; }
+      .size-btn{
+        width:44px; height:44px; border-radius:12px; border:2px solid var(--line); background:var(--paper);
+        cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;
+      }
+      .size-btn[aria-pressed="true"]{ border-color:var(--accent); background:var(--sun-soft); }
+      .size-btn i{ display:block; border-radius:50%; background:var(--ink); }
+      .toolbar .btn{ flex:0 1 auto; }
+
+      .total-bar{
+        margin-top:14px; display:flex; justify-content:space-between; align-items:center;
+        background:var(--paper); border:2px solid var(--line); border-radius:12px; padding:9px 14px;
+        font-weight:600;
+      }
+      .total-bar .stars{ color:var(--sun); letter-spacing:2px; }
+      footer{ margin-top:22px; color:var(--ink-soft); font-size:13.5px; text-align:center; }
+
+      .confetti{ position:absolute; width:9px; height:14px; border-radius:2px; pointer-events:none; z-index:9; }
+      @keyframes fall{ to{ transform:translateY(340px) rotate(560deg); opacity:0; } }
+      @media (prefers-reduced-motion: reduce){
+        .confetti{ display:none; }
+        .btn:active{ transform:none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav class="tabs" role="tablist" aria-label="Chọn chế độ">
+        <button class="tab" role="tab" id="tab-game" aria-selected="true" aria-controls="panel-game">Vẽ 1 Nét</button>
+        <button class="tab" role="tab" id="tab-learn" aria-selected="false" aria-controls="panel-learn">Học Vẽ</button>
+        <button class="tab" role="tab" id="tab-free" aria-selected="false" aria-controls="panel-free">Vẽ Tự Do</button>
+      </nav>
+
+      <!-- ============ GAME: VẼ 1 NÉT ============ -->
+      <section id="panel-game" role="tabpanel" aria-labelledby="tab-game">
+        <p class="howto"><strong>Luật chơi:</strong> các màn xếp từ dễ đến khó — màn 1 chỉ có <strong>1 đường</strong>, rồi tăng dần 2, 3, 4… đường. <strong>Cách vẽ:</strong> bấm (hoặc chạm) vào 1 chấm, rồi bấm chấm tiếp theo để nối đường — hoặc giữ chuột / ngón tay và kéo qua các chấm. Vẽ hết mọi đường mà không đi lại đường đã vẽ: xong bằng 1 nét được 3 sao, 2 nét được 2 sao, 3 nét trở lên được 1 sao. Vẽ xong 1 màn, bấm <strong>Tự vẽ không hướng dẫn</strong> để tự vẽ lại hình đó mà không có hình mẫu — <strong>vẽ xong mới mở được màn tiếp theo</strong>.</p>
+
+        <div class="picker" id="levelPicker" aria-label="Chọn màn chơi"></div>
+
+        <div class="hud" aria-label="Thông tin màn chơi">
+          <div class="cell"><span class="k">Màn</span><span class="v" id="hudLevel">1 / 14</span></div>
+          <div class="cell"><span class="k">Đường đã vẽ</span><span class="v" id="hudEdges">0 / 1</span></div>
+          <div class="cell"><span class="k">Số nét</span><span class="v" id="hudStrokes">–</span></div>
+          <div class="cell"><span class="k">Thời gian</span><span class="v" id="hudTime">0:00</span></div>
+        </div>
+
+        <div class="board-card" id="gameCard">
+          <canvas id="gameCanvas" width="900" height="900" aria-label="Bàn vẽ 1 nét — bấm vào các chấm để nối đường"></canvas>
+          <div class="overlay" id="winOverlay">
+            <div class="box">
+              <div class="stars" id="winStars">★★★</div>
+              <h2 id="winTitle">Vẽ xong rồi!</h2>
+              <p id="winText"></p>
+              <div class="row">
+                <button class="btn" id="winReplay">Chơi lại</button>
+                <button class="btn primary" id="winBlind">Tự vẽ không hướng dẫn</button>
+                <button class="btn primary" id="winNext">Màn tiếp theo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls" id="blindBar" hidden>
+          <button class="btn primary" id="btnBlindDone">Vẽ xong</button>
+          <button class="btn" id="btnBlindClear">Xóa, vẽ lại</button>
+          <button class="btn" id="btnBlindSkip">Bỏ qua</button>
+        </div>
+
+        <div class="controls">
+          <button class="btn warn" id="btnHint">Gợi ý</button>
+          <button class="btn" id="btnUndo">Hoàn tác</button>
+          <button class="btn" id="btnReset">Vẽ lại từ đầu</button>
+          <button class="btn" id="btnPrev">‹ Màn trước</button>
+          <button class="btn" id="btnNext">Màn sau ›</button>
+        </div>
+
+        <div class="msg" id="gameMsg" aria-live="polite">Bấm vào một chấm bất kỳ để bắt đầu vẽ.</div>
+
+        <div class="total-bar"><span>Tổng sao đã đạt</span><span><span class="stars" id="totalStars">☆☆☆</span> <span id="totalText">0 / 42 sao</span></span></div>
+      </section>
+
+      <!-- ============ HỌC VẼ: PHẦN 1 ĐỒ THEO NÉT ĐỨT TỪNG BƯỚC · PHẦN 2 TỰ VẼ TRÊN CÙNG 1 BẢNG, CHẤM ĐIỂM ============ -->
+      <section id="panel-learn" role="tabpanel" aria-labelledby="tab-learn" hidden>
+        <p class="howto"><strong>Cách học:</strong> tab này có <strong>2 phần</strong>. <strong>Phần 1 · Vẽ học (hướng dẫn):</strong> mỗi lúc chỉ hiện <strong>1 nét đứt</strong> — dùng chuột hoặc ngón tay <strong>đồ theo nét đứt đó</strong>, phải <strong>tô kín từ 90% trở lên của mọi nét trong bước</strong> mới xong bước và hiện nét tiếp theo (tô thiếu là chưa qua được), và phải <strong>vẽ hết mọi nét mới tính là hoàn thành</strong>. <strong>Phần 2 · Tự vẽ:</strong> bảng <strong>trống hoàn toàn, không có nét đứt nào</strong> — tự vẽ lại cả hình theo trí nhớ, vẽ xong bấm <strong>Chấm điểm</strong> (tối đa 100 điểm).</p>
+
+        <div class="picker" id="lessonPicker" aria-label="Chọn hình để vẽ"></div>
+
+        <div class="subtabs" role="group" aria-label="Chọn phần học">
+          <button class="subtab" id="subLearn" aria-pressed="true">Phần 1 · Vẽ học — đồ theo nét đứt</button>
+          <button class="subtab" id="subSelf" aria-pressed="false">Phần 2 · Tự vẽ — không hướng dẫn, chấm điểm</button>
+        </div>
+
+        <div id="partTrace">
+          <div class="hud" aria-label="Tiến độ bước vẽ học">
+            <div class="cell"><span class="k">Bước</span><span class="v" id="traceStepNum">1 / 4</span></div>
+            <div class="cell" style="flex:2 1 220px"><span class="k">Việc cần làm</span><span class="v" id="traceStepLabel" style="font-size:16.5px">—</span></div>
+          </div>
+          <div class="board-card" id="traceCard">
+            <canvas id="traceCanvas" width="900" height="900" aria-label="Bảng vẽ học — dùng chuột hoặc ngón tay đồ theo nét đứt từng bước"></canvas>
+          </div>
+          <div class="controls">
+            <button class="btn" id="btnTraceUndo">Hoàn tác nét</button>
+            <button class="btn" id="btnTraceResetStep">Làm lại bước</button>
+            <button class="btn" id="btnTracePeek" aria-pressed="false">Xem hình hoàn chỉnh</button>
+            <button class="btn" id="btnTraceRestart">Học lại từ đầu</button>
+          </div>
+          <div class="msg" id="traceMsg" aria-live="polite">Đồ theo nét đứt màu cam bằng chuột hoặc ngón tay nhé!</div>
+        </div>
+
+        <div id="partSelf" hidden>
+        <div class="board-card" id="drawCard">
+          <canvas id="drawCanvas" width="900" height="900" aria-label="Bảng tự vẽ — bảng trống, không có nét đứt nào, tự vẽ theo trí nhớ rồi bấm Chấm điểm"></canvas>
+        </div>
+
+        <div class="score-box" id="scoreBox" aria-live="polite">
+          <div class="num"><span id="scoreNum">0</span><small> / 100</small></div>
+          <div class="detail">
+            <div class="stars" id="scoreStars">★★★</div>
+            <p id="scoreText"></p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" id="btnScore">Chấm điểm</button>
+          <button class="btn" id="btnDrawUndo">Hoàn tác nét</button>
+          <button class="btn" id="btnDrawClear">Xóa bảng vẽ</button>
+          <button class="btn" id="btnLessonPrev">‹ Hình trước</button>
+          <button class="btn" id="btnLessonNext">Hình sau ›</button>
+        </div>
+
+        <div class="msg" id="learnMsg" aria-live="polite">Bảng đang trống, không có nét đứt nào — tự vẽ lại hình theo trí nhớ rồi bấm Chấm điểm nhé!</div>
+        </div>
+      </section>
+
+      <!-- ============ VẼ TỰ DO ============ -->
+      <section id="panel-free" role="tabpanel" aria-labelledby="tab-free" hidden>
+        <p class="howto"><strong>Vẽ tự do:</strong> chọn màu và cỡ bút rồi vẽ bất cứ thứ gì mình thích. Vẽ xong bấm <strong>Tải ảnh về máy</strong> để giữ lại bức tranh.</p>
+        <div class="toolbar">
+          <div class="swatches" id="swatches" aria-label="Chọn màu bút"></div>
+          <div class="sizes" id="sizes" aria-label="Chọn cỡ bút"></div>
+        </div>
+        <div class="board-card">
+          <canvas id="freeCanvas" width="900" height="900" aria-label="Bảng vẽ tự do"></canvas>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btnFreeUndo">Hoàn tác</button>
+          <button class="btn" id="btnFreeClear">Xóa hết</button>
+          <button class="btn primary" id="btnFreeSave">Tải ảnh về máy</button>
+        </div>
+        <div class="msg" id="freeMsg" aria-live="polite">Bảng đang trống — vẽ thử một bức tranh nào!</div>
+      </section>
+
+      <footer>Mẹo toán học: hình nào có 0 hoặc 2 chấm lẻ (chấm có số đường gặp nhau là số lẻ) thì luôn vẽ được bằng đúng 1 nét — mọi màn trong game đều theo đúng luật này nên luôn có đáp án.</footer>
+    </div>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function dist(a,b){ var dx=a[0]-b[0], dy=a[1]-b[1]; return Math.sqrt(dx*dx+dy*dy); }
+function boardPos(evt, el){
+  var r = el.getBoundingClientRect();
+  return [ (evt.clientX - r.left) / r.width * 100, (evt.clientY - r.top) / r.height * 100 ];
+}
+var THEME = null;
+function theme(){
+  if(THEME) return THEME;
+  var cs = getComputedStyle(document.documentElement);
+  function v(n){ return cs.getPropertyValue(n).trim(); }
+  THEME = {
+    paper: v("--paper") || "#FFFFFF", ink: v("--ink") || "#2E2A24",
+    accent: v("--accent") || "#E4572E", teal: v("--teal") || "#0E7C66",
+    sun: v("--sun") || "#F2A007", sky: v("--sky") || "#2D7FB8",
+    guide: v("--guide") || "#B9AE97"
+  };
+  return THEME;
+}
+if(window.matchMedia){
+  var mqDark = window.matchMedia("(prefers-color-scheme: dark)");
+  if(mqDark.addEventListener) mqDark.addEventListener("change", function(){ THEME = null; renderGame(); renderDraw(); if(typeof renderTrace === "function") renderTrace(); });
+}
+var audioCtx = null;
+function tone(freq, t0, dur){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === "suspended") audioCtx.resume();
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    var t = audioCtx.currentTime + (t0||0);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + (dur||0.15));
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + (dur||0.15) + 0.05);
+  }catch(e){}
+}
+function fanfare(){ tone(523,0,.16); tone(659,.13,.16); tone(784,.26,.3); }
+function pop(){ tone(740,0,.09); }
+function confetti(card){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var colors = ["#E4572E","#0E7C66","#F2A007","#2D7FB8","#D65076"];
+  for(var i=0;i<26;i++){
+    var s = document.createElement("span");
+    s.className = "confetti";
+    s.style.left = (8 + Math.random()*84) + "%";
+    s.style.top = "-16px";
+    s.style.background = colors[i % colors.length];
+    s.style.animation = "fall " + (0.9 + Math.random()*0.9) + "s ease-in " + (Math.random()*0.25) + "s forwards";
+    card.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 2400); })(s);
+  }
+}
+
+/* ---------- tabs ---------- */
+var tabDefs = [["game","tab-game","panel-game"],["learn","tab-learn","panel-learn"],["free","tab-free","panel-free"]];
+tabDefs.forEach(function(d){
+  $(d[1]).addEventListener("click", function(){
+    tabDefs.forEach(function(o){
+      $(o[1]).setAttribute("aria-selected", o[0]===d[0] ? "true" : "false");
+      $(o[2]).hidden = o[0] !== d[0];
+    });
+    if(d[0] === "game") renderGame();
+    if(d[0] === "learn"){ renderDraw(); if(typeof renderTrace === "function") renderTrace(); }
+  });
+});
+
+/* ================================================================
+   GAME — VẼ 1 NÉT (bảng vẽ bằng canvas, bấm từng chấm hoặc kéo)
+   Màn xếp theo số đường tăng dần: 1, 2, 3, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 9.
+   Mỗi màn là 1 đồ thị có 0 hoặc 2 đỉnh bậc lẻ => luôn có đường Euler.
+   ================================================================ */
+var LEVELS = [
+  { name:"Nét thẳng", nodes:[[16,50],[84,50]], edges:[[0,1]] },
+  { name:"Chữ V", nodes:[[18,22],[50,80],[82,22]], edges:[[0,1],[1,2]] },
+  { name:"Tam giác", nodes:[[50,14],[14,82],[86,82]], edges:[[0,1],[1,2],[2,0]] },
+  { name:"Hình vuông", nodes:[[24,24],[76,24],[76,76],[24,76]], edges:[[0,1],[1,2],[2,3],[3,0]] },
+  { name:"Hình thoi", nodes:[[50,8],[88,50],[50,92],[12,50]], edges:[[0,1],[1,2],[2,3],[3,0],[0,2]] },
+  { name:"Ngôi sao", nodes:[[50,8],[87,35],[73,79],[27,79],[13,35]], edges:[[0,2],[2,4],[4,1],[1,3],[3,0]] },
+  { name:"Ngôi nhà", nodes:[[18,72],[82,72],[82,32],[18,32],[50,8]], edges:[[0,1],[1,2],[2,3],[3,0],[3,4],[4,2]] },
+  { name:"Phong bì", nodes:[[12,28],[88,28],[88,86],[12,86],[50,56]], edges:[[0,1],[1,2],[2,3],[3,0],[0,4],[4,1]] },
+  { name:"Cái nơ", nodes:[[50,50],[12,18],[12,82],[88,18],[88,82]], edges:[[0,1],[1,2],[2,0],[0,3],[3,4],[4,0]] },
+  { name:"Cái lều", nodes:[[50,10],[90,86],[50,86],[10,86],[50,48]], edges:[[0,1],[1,2],[2,3],[3,0],[0,4],[4,2]] },
+  { name:"Con cá", nodes:[[10,50],[42,24],[68,50],[42,76],[90,28],[90,72]], edges:[[0,1],[1,2],[2,3],[3,0],[2,4],[4,5],[5,2]] },
+  { name:"Vương miện", nodes:[[12,84],[88,84],[88,32],[66,54],[50,24],[34,54],[12,32]], edges:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]] },
+  { name:"Trái tim", nodes:[[50,88],[22,58],[14,34],[28,16],[50,32],[72,16],[86,34],[78,58]], edges:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]] },
+  { name:"Bông hoa", nodes:[[50,54],[36,14],[64,14],[88,38],[88,68],[36,88],[64,88]], edges:[[0,1],[1,2],[2,0],[0,3],[3,4],[4,0],[0,5],[5,6],[6,0]] }
+];
+function difficultyOf(L){
+  var n = L.edges.length;
+  if(n <= 2) return "làm quen";
+  if(n <= 4) return "dễ";
+  if(n <= 6) return "vừa";
+  return "khó";
+}
+var gameCanvas = $("gameCanvas"), gtx = gameCanvas.getContext("2d");
+var G = {
+  idx:0, used:{}, usedCount:0, current:null, strokes:0, history:[],
+  finished:false, hintUsed:false, hintNode:null, seconds:0, timer:null, started:false,
+  pointer:null, stars: LEVELS.map(function(){ return 0; }),
+  blind:false, blindStrokes:[], blindCur:null, blindDrawing:false,
+  blindDone: LEVELS.map(function(){ return false; }), maxUnlocked:0
+};
+function edgeKey(a,b){ return a < b ? a+"-"+b : b+"-"+a; }
+function levelEdgeMap(L){
+  var m = {};
+  L.edges.forEach(function(e,i){ m[edgeKey(e[0],e[1])] = i; });
+  return m;
+}
+function oddNodes(L){
+  var deg = L.nodes.map(function(){ return 0; });
+  L.edges.forEach(function(e){ deg[e[0]]++; deg[e[1]]++; });
+  var out = [];
+  deg.forEach(function(d,i){ if(d % 2 === 1) out.push(i); });
+  return out;
+}
+function fmtTime(s){ return Math.floor(s/60) + ":" + ("0" + (s%60)).slice(-2); }
+
+function buildLevelPicker(){
+  var box = $("levelPicker"); box.innerHTML = "";
+  LEVELS.forEach(function(L,i){
+    var locked = i > G.maxUnlocked;
+    var b = document.createElement("button");
+    b.className = "pick"; b.type = "button";
+    b.setAttribute("aria-current", i === G.idx ? "true" : "false");
+    b.setAttribute("aria-label", locked
+      ? "Màn " + (i+1) + ": " + L.name + " — chưa mở khóa, hãy vẽ xong màn trước và bấm Vẽ xong ở phần tự vẽ không hướng dẫn"
+      : "Màn " + (i+1) + ": " + L.name + ", " + L.edges.length + " đường");
+    if(locked) b.disabled = true;
+    var lines = L.edges.map(function(e){
+      return '<line x1="'+L.nodes[e[0]][0]+'" y1="'+L.nodes[e[0]][1]+'" x2="'+L.nodes[e[1]][0]+'" y2="'+L.nodes[e[1]][1]+'" stroke="currentColor" stroke-width="3"/>';
+    }).join("");
+    var dots = L.nodes.map(function(n){ return '<circle cx="'+n[0]+'" cy="'+n[1]+'" r="4.5" fill="currentColor"/>'; }).join("");
+    b.innerHTML = '<svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true" style="color:var(--ink-soft)">'+lines+dots+'</svg>' +
+      '<span class="nm">' + (i+1) + ". " + L.name + '</span>' +
+      (locked
+        ? '<span class="meta">Chưa mở khóa</span><span class="st none">vẽ xong màn trước mới mở</span>'
+        : '<span class="meta">' + L.edges.length + ' đường · ' + difficultyOf(L) + '</span>' +
+          (G.stars[i] > 0
+            ? '<span class="st">' + "★★★".slice(0, G.stars[i]) + '<span style="color:var(--line)">' + "★★★".slice(G.stars[i]) + '</span></span>'
+            : '<span class="st none">chưa chơi</span>'));
+    if(!locked) b.addEventListener("click", function(){ loadLevel(i); });
+    box.appendChild(b);
+  });
+  var total = G.stars.reduce(function(a,b){ return a+b; }, 0);
+  $("totalText").textContent = total + " / " + (LEVELS.length*3) + " sao";
+  $("totalStars").textContent = total > 0 ? "★" : "☆☆☆";
+}
+function setGameMsg(text, bad){
+  var m = $("gameMsg"); m.textContent = text; m.className = "msg" + (bad ? " bad" : "");
+}
+function stopTimer(){ if(G.timer){ clearInterval(G.timer); G.timer = null; } }
+function startTimer(){
+  stopTimer();
+  G.timer = setInterval(function(){ G.seconds++; $("hudTime").textContent = fmtTime(G.seconds); }, 1000);
+}
+function loadLevel(i){
+  if(i > G.maxUnlocked){
+    setGameMsg("Màn " + (i+1) + " chưa mở khóa — hãy vẽ xong màn hiện tại, rồi vào phần Tự vẽ không hướng dẫn và bấm «Vẽ xong» mới sang được màn sau nhé!", true);
+    return;
+  }
+  G.idx = i; G.used = {}; G.usedCount = 0; G.current = null; G.strokes = 0;
+  G.history = []; G.finished = false; G.hintUsed = false; G.hintNode = null;
+  G.seconds = 0; G.started = false; G.pointer = null; stopTimer();
+  G.blind = false; G.blindStrokes = []; G.blindCur = null; G.blindDrawing = false;
+  $("blindBar").hidden = true;
+  $("winOverlay").classList.remove("show");
+  $("hudTime").textContent = "0:00";
+  var L = LEVELS[i], odds = oddNodes(L);
+  if(odds.length === 2) setGameMsg("Màn " + (i+1) + " — " + L.name + " (" + L.edges.length + " đường, độ " + difficultyOf(L) + "): nên bắt đầu ở 1 trong 2 chấm viền vàng để vẽ được đúng 1 nét. Bấm vào chấm đó để bắt đầu.");
+  else setGameMsg("Màn " + (i+1) + " — " + L.name + " (" + L.edges.length + " đường, độ " + difficultyOf(L) + "): bắt đầu ở chấm nào cũng được, hình này vẽ vòng kín được. Bấm vào 1 chấm để bắt đầu.");
+  buildLevelPicker(); renderGame(); updateHud();
+}
+function updateHud(){
+  var L = LEVELS[G.idx];
+  $("hudLevel").textContent = (G.idx+1) + " / " + LEVELS.length;
+  $("hudEdges").textContent = G.usedCount + " / " + L.edges.length;
+  $("hudStrokes").textContent = G.current === null && G.strokes === 0 ? "–" : String(G.strokes);
+  $("btnPrev").disabled = G.idx === 0;
+  var nextLocked = !G.blindDone[G.idx];
+  $("btnNext").disabled = G.idx === LEVELS.length - 1 || nextLocked;
+  $("btnNext").textContent = G.idx === LEVELS.length - 1 ? "Màn sau ›" : (nextLocked ? "Màn sau (chưa mở) ›" : "Màn sau ›");
+  $("winNext").disabled = G.idx === LEVELS.length - 1 || nextLocked;
+  $("winNext").textContent = G.idx === LEVELS.length - 1 ? "Màn cuối rồi" : "Màn tiếp theo";
+}
+function renderGame(){
+  var L = LEVELS[G.idx], T = theme(), odds = oddNodes(L), S = 9; /* 100 units -> 900 px */
+  gtx.clearRect(0, 0, 900, 900);
+  gtx.lineCap = "round"; gtx.lineJoin = "round";
+  /* blind mode: no guide, no dots — just the player's own freehand strokes */
+  if(G.blind){
+    gtx.setLineDash([]);
+    gtx.strokeStyle = T.accent; gtx.lineWidth = 24;
+    G.blindStrokes.concat(G.blindCur ? [G.blindCur] : []).forEach(function(st){
+      gtx.beginPath();
+      st.forEach(function(p,i){ if(i === 0) gtx.moveTo(p[0]*S, p[1]*S); else gtx.lineTo(p[0]*S, p[1]*S); });
+      if(st.length === 1) gtx.lineTo(st[0][0]*S + 1, st[0][1]*S + 1);
+      gtx.stroke();
+    });
+    return;
+  }
+  /* guide edges */
+  gtx.setLineDash([]);
+  gtx.strokeStyle = T.guide; gtx.globalAlpha = 0.55; gtx.lineWidth = 12;
+  L.edges.forEach(function(e){
+    gtx.beginPath();
+    gtx.moveTo(L.nodes[e[0]][0]*S, L.nodes[e[0]][1]*S);
+    gtx.lineTo(L.nodes[e[1]][0]*S, L.nodes[e[1]][1]*S);
+    gtx.stroke();
+  });
+  gtx.globalAlpha = 1;
+  /* drawn edges */
+  gtx.strokeStyle = T.accent; gtx.lineWidth = 24;
+  L.edges.forEach(function(e,i){
+    if(!G.used[i]) return;
+    gtx.beginPath();
+    gtx.moveTo(L.nodes[e[0]][0]*S, L.nodes[e[0]][1]*S);
+    gtx.lineTo(L.nodes[e[1]][0]*S, L.nodes[e[1]][1]*S);
+    gtx.stroke();
+  });
+  /* live preview line from current node to pointer — shows the pointer is tracked */
+  if(G.current !== null && G.pointer && !G.finished){
+    gtx.strokeStyle = T.accent; gtx.globalAlpha = 0.45; gtx.lineWidth = 16;
+    gtx.setLineDash([26, 18]);
+    gtx.beginPath();
+    gtx.moveTo(L.nodes[G.current][0]*S, L.nodes[G.current][1]*S);
+    gtx.lineTo(G.pointer[0]*S, G.pointer[1]*S);
+    gtx.stroke();
+    gtx.setLineDash([]); gtx.globalAlpha = 1;
+  }
+  /* nodes */
+  L.nodes.forEach(function(n,i){
+    var x = n[0]*S, y = n[1]*S;
+    if(G.hintNode === i){
+      gtx.strokeStyle = T.sky; gtx.lineWidth = 14;
+      gtx.beginPath(); gtx.arc(x, y, 58, 0, Math.PI*2); gtx.stroke();
+    }
+    if(odds.indexOf(i) >= 0 && G.usedCount === 0){
+      gtx.strokeStyle = T.sun; gtx.lineWidth = 12;
+      gtx.beginPath(); gtx.arc(x, y, 44, 0, Math.PI*2); gtx.stroke();
+    }
+    var isCur = G.current === i;
+    gtx.beginPath(); gtx.arc(x, y, isCur ? 34 : 26, 0, Math.PI*2);
+    gtx.fillStyle = isCur ? T.accent : T.paper; gtx.fill();
+    gtx.strokeStyle = isCur ? T.accent : T.ink; gtx.lineWidth = 13; gtx.stroke();
+  });
+}
+function eulerTrail(L, usedMap, start){
+  var adj = L.nodes.map(function(){ return []; });
+  L.edges.forEach(function(e,i){
+    if(usedMap[i]) return;
+    adj[e[0]].push({to:e[1], id:i}); adj[e[1]].push({to:e[0], id:i});
+  });
+  var usedLocal = {}, stack = [start], edgeStack = [], path = [];
+  while(stack.length){
+    var v = stack[stack.length-1];
+    var nxt = null;
+    for(var k=0;k<adj[v].length;k++){ if(!usedLocal[adj[v][k].id]){ nxt = adj[v][k]; break; } }
+    if(nxt){ usedLocal[nxt.id] = true; stack.push(nxt.to); edgeStack.push(nxt.id); }
+    else { path.push(stack.pop()); edgeStack.pop(); }
+  }
+  path.reverse();
+  var remaining = L.edges.filter(function(e,i){ return !usedMap[i]; }).length;
+  return (path.length - 1 === remaining) ? path : null;
+}
+function traverseTo(node){
+  var L = LEVELS[G.idx], map = levelEdgeMap(L);
+  var ei = map[edgeKey(G.current, node)];
+  G.used[ei] = true; G.usedCount++;
+  G.history.push({type:"edge", edge:ei, from:G.current, to:node});
+  G.current = node; G.hintNode = null;
+  pop();
+  renderGame(); updateHud();
+  if(G.usedCount === L.edges.length){ winLevel(); return; }
+  var hasNext = L.edges.some(function(e,i){
+    return !G.used[i] && (e[0] === G.current || e[1] === G.current);
+  });
+  if(!hasNext) setGameMsg("Hết đường ở chấm này rồi! Bấm Hoàn tác để quay lại, hoặc bấm vào một chấm khác để vẽ tiếp (tính thêm 1 nét).", true);
+  else setGameMsg("Đã vẽ " + G.usedCount + "/" + L.edges.length + " đường. Bấm chấm kề tiếp theo, hoặc kéo tiếp nhé!");
+}
+function jumpTo(node){
+  G.history.push({type:"jump", from:G.current, to:node});
+  G.current = node; G.strokes++; G.hintNode = null;
+  setGameMsg("Đã nhảy sang chấm mới — đang ở nét thứ " + G.strokes + ". Bấm chấm kề để vẽ các đường còn lại.", true);
+  renderGame(); updateHud();
+}
+function gameNodeAction(node){
+  if(G.finished) return;
+  if(!G.started){ G.started = true; startTimer(); }
+  if(G.current === null){
+    G.current = node; G.strokes = 1; G.hintNode = null;
+    G.history.push({type:"start", to:node});
+    setGameMsg("Bắt đầu! Bấm vào chấm kề bên (hoặc kéo tới chấm đó) để vẽ đường đầu tiên.");
+    renderGame(); updateHud(); return;
+  }
+  if(node === G.current) return;
+  var L = LEVELS[G.idx], map = levelEdgeMap(L);
+  var ei = map[edgeKey(G.current, node)];
+  if(ei !== undefined && !G.used[ei]) traverseTo(node);
+  else if(ei !== undefined && G.used[ei]) setGameMsg("Đường đó vẽ rồi, không đi lại được. Chọn đường khác nhé!", true);
+  else jumpTo(node);
+}
+function hitNode(pt){
+  var L = LEVELS[G.idx], best = null, bd = 10;
+  L.nodes.forEach(function(n,i){ var d = dist(pt,n); if(d < bd){ bd = d; best = i; } });
+  return best;
+}
+var penIsDown = false;
+gameCanvas.addEventListener("pointerdown", function(e){
+  e.preventDefault();
+  if(G.blind){
+    G.blindDrawing = true;
+    try{ gameCanvas.setPointerCapture(e.pointerId); }catch(err){}
+    G.blindCur = [boardPos(e, gameCanvas)];
+    renderGame(); return;
+  }
+  penIsDown = true;
+  try{ gameCanvas.setPointerCapture(e.pointerId); }catch(err){}
+  var pt = boardPos(e, gameCanvas);
+  G.pointer = pt;
+  var n = hitNode(pt);
+  if(n !== null) gameNodeAction(n);
+  renderGame();
+});
+gameCanvas.addEventListener("pointermove", function(e){
+  if(G.blind){
+    if(G.blindDrawing && G.blindCur){
+      var bp = boardPos(e, gameCanvas), bl = G.blindCur[G.blindCur.length-1];
+      if(dist(bp, bl) > 0.9){ G.blindCur.push(bp); renderGame(); }
+    }
+    return;
+  }
+  var pt = boardPos(e, gameCanvas);
+  G.pointer = pt;
+  if(penIsDown && !G.finished && G.current !== null){
+    var n = hitNode(pt);
+    if(n !== null && n !== G.current){
+      var L = LEVELS[G.idx], map = levelEdgeMap(L);
+      var ei = map[edgeKey(G.current, n)];
+      if(ei !== undefined && !G.used[ei]){ traverseTo(n); return; }
+    }
+  }
+  if(!G.finished) renderGame();
+});
+["pointerup","pointercancel"].forEach(function(ev){
+  gameCanvas.addEventListener(ev, function(){
+    if(G.blind){
+      if(G.blindDrawing && G.blindCur && G.blindCur.length > 1) G.blindStrokes.push(G.blindCur);
+      G.blindDrawing = false; G.blindCur = null; renderGame(); return;
+    }
+    penIsDown = false; renderGame();
+  });
+});
+gameCanvas.addEventListener("pointerleave", function(){ G.pointer = null; if(!G.finished) renderGame(); });
+function winLevel(){
+  G.finished = true; stopTimer();
+  var stars = G.strokes <= 1 ? 3 : (G.strokes === 2 ? 2 : 1);
+  if(G.hintUsed && stars === 3) stars = 2;
+  if(stars > G.stars[G.idx]) G.stars[G.idx] = stars;
+  $("winStars").innerHTML = [1,2,3].map(function(k){
+    return '<span class="'+(k <= stars ? "" : "off")+'">★</span>';
+  }).join("");
+  $("winTitle").textContent = stars === 3 ? "Xuất sắc — đúng 1 nét!" : "Vẽ xong rồi!";
+  $("winText").textContent = "Màn " + (G.idx+1) + " (" + LEVELS[G.idx].name + "): vẽ bằng " + G.strokes +
+    " nét trong " + fmtTime(G.seconds) + (G.hintUsed ? " — có dùng gợi ý" : "") + (G.blindDone[G.idx] ? "." : ". Hãy bấm «Tự vẽ không hướng dẫn» và bấm «Vẽ xong» mới mở được màn tiếp theo.");
+  showWinPhase(!!G.blindDone[G.idx]);
+  fanfare(); confetti($("gameCard"));
+  buildLevelPicker(); updateHud(); renderGame();
+}
+/* Bảng thắng có 2 pha: vừa thắng -> hiện nút "Tự vẽ không hướng dẫn", ẩn nút màn tiếp;
+   tự vẽ xong -> mới hiện nút "Màn tiếp theo". */
+function showWinPhase(blindDone){
+  $("winBlind").style.display = blindDone ? "none" : "";
+  $("winNext").style.display = blindDone ? "" : "none";
+  $("winBlind").className = "btn primary";
+  $("winNext").className = blindDone ? "btn primary" : "btn";
+  $("winOverlay").classList.add("show");
+}
+$("btnUndo").addEventListener("click", function(){
+  if(G.blind){ setGameMsg("Đang tự vẽ không hướng dẫn — bấm «Vẽ xong» hoặc «Bỏ qua» ở thanh Tự vẽ phía trên nhé.", true); return; }
+  var h = G.history.pop();
+  if(!h){ setGameMsg("Chưa có gì để hoàn tác.", true); return; }
+  G.finished = false; $("winOverlay").classList.remove("show");
+  if(h.type === "edge"){ delete G.used[h.edge]; G.usedCount--; G.current = h.from; }
+  else if(h.type === "jump"){ G.current = h.from; G.strokes--; }
+  else if(h.type === "start"){ G.current = null; G.strokes = 0; }
+  G.hintNode = null;
+  setGameMsg("Đã hoàn tác 1 bước.");
+  renderGame(); updateHud();
+});
+$("btnReset").addEventListener("click", function(){ loadLevel(G.idx); });
+$("btnPrev").addEventListener("click", function(){ if(G.idx > 0) loadLevel(G.idx - 1); });
+$("btnNext").addEventListener("click", function(){
+  if(!G.blindDone[G.idx]){ setGameMsg("Chưa sang màn sau được — hãy vẽ xong màn này, rồi vào phần Tự vẽ không hướng dẫn và bấm «Vẽ xong» trước nhé!", true); return; }
+  if(G.idx < LEVELS.length - 1) loadLevel(G.idx + 1);
+});
+$("winReplay").addEventListener("click", function(){ loadLevel(G.idx); });
+$("winNext").addEventListener("click", function(){
+  if(!G.blindDone[G.idx]){ setGameMsg("Chưa sang màn sau được — hãy tự vẽ không hướng dẫn và bấm «Vẽ xong» trước nhé!", true); return; }
+  if(G.idx < LEVELS.length - 1) loadLevel(G.idx + 1);
+});
+/* --- Tự vẽ không hướng dẫn: thắng xong, tự vẽ lại hình vừa chơi trên bảng trống --- */
+$("winBlind").addEventListener("click", function(){
+  G.blind = true; G.blindStrokes = []; G.blindCur = null; G.blindDrawing = false;
+  $("winOverlay").classList.remove("show");
+  $("blindBar").hidden = false;
+  setGameMsg("Tự vẽ không hướng dẫn: vẽ lại hình «" + LEVELS[G.idx].name + "» theo trí nhớ — bảng trống, không có chấm, không có đường mẫu. Dùng chuột hoặc ngón tay vẽ tự do, xong bấm nút «Vẽ xong».");
+  renderGame();
+});
+$("btnBlindDone").addEventListener("click", function(){
+  if(!G.blindStrokes.length){ setGameMsg("Chưa vẽ gì cả — hãy tự vẽ hình trước đã nhé!", true); return; }
+  G.blind = false; $("blindBar").hidden = true;
+  G.blindDone[G.idx] = true;
+  if(G.idx + 1 > G.maxUnlocked) G.maxUnlocked = Math.min(G.idx + 1, LEVELS.length - 1);
+  buildLevelPicker(); updateHud();
+  $("winTitle").textContent = "Tự vẽ xong!";
+  $("winText").textContent = "Bạn đã tự vẽ lại hình " + LEVELS[G.idx].name + " mà không cần hình hướng dẫn. Giờ sang màn tiếp theo được rồi!";
+  showWinPhase(true);
+  fanfare(); confetti($("gameCard"));
+  renderGame();
+});
+$("btnBlindClear").addEventListener("click", function(){
+  G.blindStrokes = []; G.blindCur = null; renderGame();
+  setGameMsg("Đã xóa — vẽ lại hình «" + LEVELS[G.idx].name + "» theo trí nhớ nhé!");
+});
+$("btnBlindSkip").addEventListener("click", function(){
+  G.blind = false; G.blindStrokes = []; G.blindCur = null; G.blindDrawing = false;
+  $("blindBar").hidden = true;
+  updateHud();
+  showWinPhase(false);
+  setGameMsg("Đã bỏ qua phần tự vẽ — màn sau vẫn đang khóa. Bấm «Tự vẽ không hướng dẫn» và bấm «Vẽ xong» mới mở được màn tiếp theo nhé!", true);
+  renderGame();
+});
+$("btnHint").addEventListener("click", function(){
+  if(G.finished || G.blind) return;
+  var L = LEVELS[G.idx];
+  G.hintUsed = true;
+  if(G.current !== null){
+    var trail = eulerTrail(L, G.used, G.current);
+    if(trail && trail.length > 1){
+      G.hintNode = trail[1];
+      setGameMsg("Gợi ý: đi tới chấm đang có vòng xanh tiếp theo. (Dùng gợi ý thì màn này tối đa 2 sao.)");
+      renderGame(); return;
+    }
+  }
+  var starts = oddNodes(L).filter(function(n){
+    return L.edges.some(function(e,i){ return !G.used[i] && (e[0]===n || e[1]===n); });
+  });
+  if(starts.length === 0) starts = L.nodes.map(function(_,i){ return i; }).filter(function(n){
+    return L.edges.some(function(e,i){ return !G.used[i] && (e[0]===n || e[1]===n); });
+  });
+  for(var s=0;s<starts.length;s++){
+    var t2 = eulerTrail(L, G.used, starts[s]);
+    if(t2){ G.hintNode = starts[s];
+      setGameMsg(G.current === null
+        ? "Gợi ý: hãy bắt đầu từ chấm đang có vòng xanh. (Dùng gợi ý thì màn này tối đa 2 sao.)"
+        : "Từ chấm hiện tại không vẽ hết được nữa. Hãy bấm vào chấm đang có vòng xanh (tính thêm 1 nét), hoặc Hoàn tác vài bước.");
+      renderGame(); return;
+    }
+  }
+  setGameMsg("Đoạn còn lại chưa vẽ hết được từ đây — bấm Hoàn tác vài bước rồi thử lại nhé.", true);
+});
+loadLevel(0);
+</script>
+
+<script>
+"use strict";
+/* ================================================================
+   HỌC VẼ — Phần 2 · Tự vẽ: bảng trống hoàn toàn, KHÔNG có nét đứt nào,
+   người học tự vẽ lại theo trí nhớ rồi chấm điểm (mẫu chỉ dùng để chấm).
+   Chấm điểm: so nét người vẽ với nét mẫu (độ phủ + độ đúng chỗ).
+   Mỗi hình là 1 tập đường mẫu (mỗi đường là dãy điểm [x,y]).
+   ================================================================ */
+function circ(cx, cy, r, n){
+  var p = [], N = n || 44;
+  for(var i=0;i<=N;i++){ var a = i/N*Math.PI*2; p.push([cx + r*Math.cos(a), cy + r*Math.sin(a)]); }
+  return p;
+}
+function ell(cx, cy, rx, ry, n){
+  var p = [], N = n || 48;
+  for(var i=0;i<=N;i++){ var a = i/N*Math.PI*2; p.push([cx + rx*Math.cos(a), cy + ry*Math.sin(a)]); }
+  return p;
+}
+function line(a, b, n){
+  var p = [], N = n || 16;
+  for(var i=0;i<=N;i++){ p.push([a[0] + (b[0]-a[0])*i/N, a[1] + (b[1]-a[1])*i/N]); }
+  return p;
+}
+function quad(a, c, b, n){
+  var p = [], N = n || 22;
+  for(var i=0;i<=N;i++){
+    var t = i/N, u = 1-t;
+    p.push([u*u*a[0] + 2*u*t*c[0] + t*t*b[0], u*u*a[1] + 2*u*t*c[1] + t*t*b[1]]);
+  }
+  return p;
+}
+function join(){
+  var out = [];
+  for(var i=0;i<arguments.length;i++){
+    var seg = arguments[i];
+    for(var j=0;j<seg.length;j++){ if(out.length && j===0) continue; out.push(seg[j]); }
+  }
+  return out;
+}
+function rectPath(x, y, w, h){
+  return join(line([x,y],[x+w,y]), line([x+w,y],[x+w,y+h]), line([x+w,y+h],[x,y+h]), line([x,y+h],[x,y]));
+}
+var FIGURES = [
+  { name:"Con mèo", paths:[
+    circ(50,54,26),
+    join(line([33,38],[41,14]), line([41,14],[52,33])),
+    join(line([48,33],[59,14]), line([59,14],[67,38])),
+    circ(41,50,3,20), circ(59,50,3,20),
+    join(line([47,59],[53,59]), line([53,59],[50,63]), line([50,63],[47,59])),
+    line([36,58],[19,53]), line([36,64],[20,65]), line([64,58],[81,53]), line([64,64],[80,65])
+  ]},
+  { name:"Con cá", paths:[
+    ell(42,50,30,18),
+    join(line([68,50],[89,33]), line([89,33],[89,67]), line([89,67],[68,50])),
+    quad([36,35],[28,50],[36,65]),
+    circ(27,45,3.2,20),
+    join(line([46,33],[58,24]), line([58,24],[62,34]))
+  ]},
+  { name:"Ngôi nhà", paths:[
+    rectPath(28,48,44,36),
+    join(line([22,48],[50,24]), line([50,24],[78,48])),
+    join(line([44,84],[44,62]), line([44,62],[56,62]), line([56,62],[56,84])),
+    rectPath(32,57,11,11),
+    join(line([61,33],[61,20]), line([61,20],[68,20]), line([68,20],[68,38]))
+  ]},
+  { name:"Bông hoa", paths:[
+    circ(50,25,8,28), circ(63,33,8,28), circ(58,47,8,28), circ(42,47,8,28), circ(37,33,8,28),
+    circ(50,36,6,26),
+    quad([50,44],[47,62],[50,82]),
+    join(quad([49,66],[36,58],[35,68]), quad([35,68],[42,74],[49,72]))
+  ]},
+  { name:"Ô tô", paths:[
+    join(line([13,64],[13,53]), quad([13,53],[22,49],[32,48]), line([32,48],[39,36]), line([39,36],[61,36]), line([61,36],[69,48]), quad([69,48],[82,50],[87,54]), line([87,54],[87,64])),
+    line([13,64],[87,64]),
+    circ(30,64,8,30), circ(70,64,8,30),
+    join(line([50,37],[50,48]), line([39,48],[69,48]))
+  ]},
+  { name:"Con chim", paths:[
+    ell(47,55,26,16),
+    circ(71,41,10,32),
+    join(line([79,38],[90,42]), line([90,42],[79,47])),
+    join(quad([32,52],[44,42],[56,52]), quad([56,52],[44,58],[32,52])),
+    line([42,70],[42,81]), line([54,70],[54,81]), circ(74,39,1.8,14)
+  ]}
+];
+function pathsToSvg(paths, attrs){
+  return paths.map(function(p){
+    var d = p.map(function(pt,i){ return (i===0 ? "M" : "L") + pt[0].toFixed(1) + " " + pt[1].toFixed(1); }).join(" ");
+    return '<path d="'+d+'" fill="none" '+attrs+'/>';
+  }).join("");
+}
+var drawCanvas = $("drawCanvas"), dtx = drawCanvas.getContext("2d");
+var DR = {
+  idx:0, strokes:[], cur:null, drawing:false,
+  best: FIGURES.map(function(){ return -1; })
+};
+function buildFigurePicker(){
+  var box = $("lessonPicker"); box.innerHTML = "";
+  FIGURES.forEach(function(f,i){
+    var b = document.createElement("button");
+    b.className = "pick"; b.type = "button";
+    b.setAttribute("aria-current", i === DR.idx ? "true" : "false");
+    b.setAttribute("aria-label", "Hình " + (i+1) + ": " + f.name);
+    b.innerHTML = '<svg viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">' +
+      pathsToSvg(f.paths, 'style="stroke:var(--ink-soft)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"') + '</svg>' +
+      '<span class="nm">' + (i+1) + ". " + f.name + '</span>' +
+      (DR.best[i] >= 0
+        ? '<span class="st none" style="color:var(--teal);font-weight:700">điểm cao nhất: ' + DR.best[i] + '</span>'
+        : '<span class="st none">chưa chấm điểm</span>');
+    b.addEventListener("click", function(){ loadFigure(i); });
+    box.appendChild(b);
+  });
+}
+function setLearnMsg(t, bad){
+  var m = $("learnMsg"); m.textContent = t; m.className = "msg" + (bad ? " bad" : "");
+}
+function loadFigure(i){
+  DR.idx = i; DR.strokes = []; DR.cur = null; DR.drawing = false;
+  $("scoreBox").classList.remove("show");
+  $("btnLessonPrev").disabled = i === 0;
+  $("btnLessonNext").disabled = i === FIGURES.length - 1;
+  buildFigurePicker(); renderDraw();
+  resetTrace(); renderTrace();
+  setLearnMsg("Hình " + (i+1) + " — " + FIGURES[i].name + ": ở Phần 1, nét đứt hiện từng nét một, vẽ xong mới hiện nét tiếp. Ở Phần 2, bảng trống không có nét đứt nào — tự vẽ lại theo trí nhớ rồi bấm Chấm điểm nhé!");
+}
+function renderDraw(){
+  var T = theme(), S = 9;
+  dtx.clearRect(0, 0, 900, 900);
+  dtx.lineCap = "round"; dtx.lineJoin = "round";
+  /* Tự vẽ KHÔNG hướng dẫn: bảng trống hoàn toàn — không vẽ nét đứt, không vẽ hình mẫu,
+     chỉ hiện những nét người học tự vẽ (hình mẫu chỉ dùng ngầm để chấm điểm). */
+  dtx.setLineDash([]);
+  dtx.strokeStyle = T.accent; dtx.lineWidth = 26;
+  var all = DR.strokes.concat(DR.cur ? [DR.cur] : []);
+  all.forEach(function(st){
+    dtx.beginPath();
+    st.forEach(function(p,i){ if(i === 0) dtx.moveTo(p[0]*S, p[1]*S); else dtx.lineTo(p[0]*S, p[1]*S); });
+    if(st.length === 1) dtx.lineTo(st[0][0]*S + 1, st[0][1]*S + 1);
+    dtx.stroke();
+  });
+}
+drawCanvas.addEventListener("pointerdown", function(e){
+  e.preventDefault(); DR.drawing = true;
+  try{ drawCanvas.setPointerCapture(e.pointerId); }catch(err){}
+  DR.cur = [boardPos(e, drawCanvas)];
+  $("scoreBox").classList.remove("show");
+  renderDraw();
+});
+drawCanvas.addEventListener("pointermove", function(e){
+  if(!DR.drawing || !DR.cur) return;
+  var p = boardPos(e, drawCanvas);
+  var last = DR.cur[DR.cur.length-1];
+  if(dist(p, last) > 0.9){ DR.cur.push(p); renderDraw(); }
+});
+["pointerup","pointercancel"].forEach(function(ev){
+  drawCanvas.addEventListener(ev, function(){
+    if(!DR.drawing) return;
+    DR.drawing = false;
+    if(DR.cur && DR.cur.length > 1) DR.strokes.push(DR.cur);
+    DR.cur = null; renderDraw();
+  });
+});
+$("btnDrawUndo").addEventListener("click", function(){
+  DR.strokes.pop(); renderDraw();
+  setLearnMsg(DR.strokes.length ? "Đã hoàn tác 1 nét." : "Bảng vẽ trống rồi — vẽ lại từ đầu nhé.");
+});
+$("btnDrawClear").addEventListener("click", function(){
+  DR.strokes = []; DR.cur = null; renderDraw();
+  $("scoreBox").classList.remove("show");
+  setLearnMsg("Đã xóa bảng vẽ. Bảng trống không có nét đứt nào — tự vẽ lại hình theo trí nhớ rồi bấm Chấm điểm nhé!");
+});
+$("btnLessonPrev").addEventListener("click", function(){ if(DR.idx > 0) loadFigure(DR.idx - 1); });
+$("btnLessonNext").addEventListener("click", function(){ if(DR.idx < FIGURES.length - 1) loadFigure(DR.idx + 1); });
+
+/* ----- Chấm điểm ----- */
+function samplePoints(paths, step){
+  var out = [];
+  paths.forEach(function(p){
+    for(var i=0;i<p.length;i+=step) out.push(p[i]);
+  });
+  return out;
+}
+function nearAny(pt, pts, tol){
+  var t2 = tol*tol;
+  for(var i=0;i<pts.length;i++){
+    var dx = pt[0]-pts[i][0], dy = pt[1]-pts[i][1];
+    if(dx*dx + dy*dy <= t2) return true;
+  }
+  return false;
+}
+$("btnScore").addEventListener("click", function(){
+  var user = [];
+  DR.strokes.forEach(function(s){ s.forEach(function(p){ user.push(p); }); });
+  if(user.length < 8){
+    setLearnMsg("Chưa có gì để chấm — hãy vẽ trên bảng trước đã nhé!", true);
+    $("scoreBox").classList.remove("show");
+    return;
+  }
+  var TOL = 6.5;
+  var sample = samplePoints(FIGURES[DR.idx].paths, 1);
+  var hitS = 0;
+  sample.forEach(function(p){ if(nearAny(p, user, TOL)) hitS++; });
+  var coverage = sample.length ? hitS / sample.length : 0;
+  var userSampled = samplePoints([user], 2);
+  var hitU = 0;
+  userSampled.forEach(function(p){ if(nearAny(p, sample, TOL)) hitU++; });
+  var precision = userSampled.length ? hitU / userSampled.length : 0;
+  var score = Math.round(100 * (0.62 * coverage + 0.38 * precision));
+  if(score > 100) score = 100;
+  var stars = score >= 85 ? 3 : (score >= 65 ? 2 : (score >= 40 ? 1 : 0));
+  var verdict = score >= 85 ? "Rất giống mẫu — vẽ đẹp lắm!" :
+    score >= 65 ? "Khá giống mẫu rồi, cố thêm chút nữa!" :
+    score >= 40 ? "Đã nhận ra hình rồi — vẽ nốt những phần còn thiếu nhé." :
+    "Chưa giống mẫu lắm — quay lại Phần 1 đồ lại từng nét cho nhớ rồi vẽ lại nhé.";
+  if(score > DR.best[DR.idx]) DR.best[DR.idx] = score;
+  $("scoreNum").textContent = score;
+  $("scoreStars").innerHTML = [1,2,3].map(function(k){
+    return '<span class="'+(k <= stars ? "" : "off")+'">★</span>';
+  }).join("");
+  $("scoreText").innerHTML = "<strong>" + verdict + "</strong><br>Đã vẽ được " +
+    Math.round(coverage*100) + "% nét của hình mẫu · " + Math.round(precision*100) +
+    "% nét vẽ nằm đúng trên hình mẫu." + (DR.best[DR.idx] > score ? "" : " Đây là điểm cao nhất của hình này.");
+  $("scoreBox").classList.add("show");
+  setLearnMsg("Đã chấm xong hình " + FIGURES[DR.idx].name + ": " + score + " điểm. Muốn điểm cao hơn thì bấm Xóa bảng vẽ và vẽ lại.");
+  if(stars >= 2){ fanfare(); confetti($("drawCard")); } else pop();
+  buildFigurePicker();
+});
+/* ================================================================
+   PHẦN 1 · VẼ HỌC — đồ theo nét đứt từng bước, ngay trên canvas
+   (vẽ bằng chuột / ngón tay, cùng cơ chế pointer như tab Vẽ Tự Do).
+   Nét đứt vẽ bằng canvas nên luôn nhìn thấy rõ, không phụ thuộc SVG.
+   ================================================================ */
+var FIGURE_STEPS = [
+  [ {label:"Vẽ vòng tròn làm đầu mèo", paths:[0]}, {label:"Vẽ 2 tai nhọn", paths:[1,2]}, {label:"Vẽ mắt, mũi và miệng", paths:[3,4,5]}, {label:"Vẽ râu mèo", paths:[6]} ],
+  [ {label:"Vẽ thân cá", paths:[0]}, {label:"Vẽ đuôi cá", paths:[1]}, {label:"Vẽ vây cá", paths:[2,4]}, {label:"Vẽ mắt cá", paths:[3]} ],
+  [ {label:"Vẽ tường nhà", paths:[0]}, {label:"Vẽ mái nhà", paths:[1]}, {label:"Vẽ cửa ra vào", paths:[2]}, {label:"Vẽ cửa sổ", paths:[3]}, {label:"Vẽ ống khói", paths:[4]} ],
+  [ {label:"Vẽ 5 cánh hoa", paths:[0,1,2,3,4]}, {label:"Vẽ nhụy hoa ở giữa", paths:[5]}, {label:"Vẽ thân hoa", paths:[6]}, {label:"Vẽ chiếc lá", paths:[7]} ],
+  [ {label:"Vẽ thân xe", paths:[0,1]}, {label:"Vẽ 2 bánh xe", paths:[2]}, {label:"Vẽ cửa kính xe", paths:[3]} ],
+  [ {label:"Vẽ thân chim", paths:[0]}, {label:"Vẽ đầu và mỏ chim", paths:[1,2]}, {label:"Vẽ cánh chim", paths:[3]}, {label:"Vẽ chân và mắt", paths:[4]} ]
+];
+var traceCanvas = $("traceCanvas"), ttx = traceCanvas.getContext("2d");
+var TR = { step:0, strokes:[], stepStrokes:[], cur:null, drawing:false, done:false, peek:false };
+function traceSteps(){ return FIGURE_STEPS[DR.idx]; }
+function setTraceMsg(t, bad){
+  var m = $("traceMsg"); m.textContent = t; m.className = "msg" + (bad ? " bad" : "");
+}
+function updateTraceHud(){
+  var steps = traceSteps();
+  $("traceStepNum").textContent = TR.done ? steps.length + " / " + steps.length : (TR.step + 1) + " / " + steps.length;
+  $("traceStepLabel").textContent = TR.done ? "Đã vẽ xong cả hình!" : steps[TR.step].label;
+}
+function resetTrace(){
+  TR.step = 0; TR.strokes = []; TR.stepStrokes = []; TR.cur = null;
+  TR.drawing = false; TR.done = false; TR.peek = false;
+  var pk = $("btnTracePeek");
+  pk.textContent = "Xem hình hoàn chỉnh"; pk.setAttribute("aria-pressed", "false");
+  updateTraceHud();
+  setTraceMsg("Bước 1: " + traceSteps()[0].label + ". Dùng chuột hoặc ngón tay đồ theo nét đứt màu cam nhé!");
+}
+function strokePaths(ctx, paths, S){
+  paths.forEach(function(p){
+    ctx.beginPath();
+    p.forEach(function(pt,i){ if(i === 0) ctx.moveTo(pt[0]*S, pt[1]*S); else ctx.lineTo(pt[0]*S, pt[1]*S); });
+    ctx.stroke();
+  });
+}
+function renderTrace(){
+  var T = theme(), S = 9, F = FIGURES[DR.idx], steps = traceSteps();
+  ttx.clearRect(0, 0, 900, 900);
+  ttx.lineCap = "round"; ttx.lineJoin = "round";
+  if(TR.peek){
+    ttx.setLineDash([]); ttx.strokeStyle = T.sky; ttx.globalAlpha = 0.45; ttx.lineWidth = 20;
+    strokePaths(ttx, F.paths, S);
+    ttx.globalAlpha = 1;
+  }
+  /* guide: CHỈ hiện nét đứt của bước hiện tại — bước đã xong chỉ còn nét vẽ thật của
+     người học, bước sau chưa hiện ra; vẽ xong nét này mới hiện nét tiếp theo,
+     vẽ hết mọi nét mới hoàn thành (TR.done chỉ bật sau bước cuối). */
+  if(!TR.done && steps[TR.step]){
+    var curPaths = steps[TR.step].paths.map(function(pi){ return F.paths[pi]; });
+    ttx.setLineDash([30, 20]); ttx.strokeStyle = T.accent; ttx.globalAlpha = 0.9; ttx.lineWidth = 17;
+    strokePaths(ttx, curPaths, S);
+    ttx.setLineDash([]); ttx.globalAlpha = 1;
+  }
+  /* user's ink */
+  ttx.setLineDash([]); ttx.strokeStyle = T.accent; ttx.lineWidth = 24;
+  TR.strokes.concat(TR.stepStrokes).concat(TR.cur ? [TR.cur] : []).forEach(function(st){
+    ttx.beginPath();
+    st.forEach(function(p,i){ if(i === 0) ttx.moveTo(p[0]*S, p[1]*S); else ttx.lineTo(p[0]*S, p[1]*S); });
+    if(st.length === 1) ttx.lineTo(st[0][0]*S + 1, st[0][1]*S + 1);
+    ttx.stroke();
+  });
+}
+function traceStepProgress(){
+  /* Đo độ tô kín của TỪNG nét trong bước hiện tại (không gộp chung cả bước):
+     trả về độ phủ của nét bị thiếu nhiều nhất + số nét chưa tô đủ.
+     Trước đây gộp chung cả bước với ngưỡng 55% nên mới vẽ 1 nét trong bước
+     đã báo xong — nay mỗi nét phải tô kín >= 90% mới tính là xong nét đó. */
+  var F = FIGURES[DR.idx], st = traceSteps()[TR.step], user = [];
+  TR.stepStrokes.forEach(function(s){ s.forEach(function(p){ user.push(p); }); });
+  var min = 1, missing = 0;
+  st.paths.forEach(function(pi){
+    var pts = F.paths[pi], hit = 0;
+    if(user.length) pts.forEach(function(p){ if(nearAny(p, user, 6)) hit++; });
+    var cov = pts.length ? hit / pts.length : 1;
+    if(cov < min) min = cov;
+    if(cov < TRACE_NEED) missing++;
+  });
+  return { min: min, missing: missing };
+}
+var TRACE_NEED = 0.9;
+function completeTraceStep(){
+  TR.strokes = TR.strokes.concat(TR.stepStrokes); TR.stepStrokes = [];
+  var steps = traceSteps();
+  if(TR.step >= steps.length - 1){
+    TR.done = true; updateTraceHud(); renderTrace();
+    setTraceMsg("Hoàn thành! Bạn đã vẽ hết mọi nét của hình " + FIGURES[DR.idx].name + " theo từng bước. Sang Phần 2 · Tự vẽ để tự vẽ lại cả hình trên bảng trống — không có nét đứt nào — và được chấm điểm nhé!");
+    fanfare(); confetti($("traceCard"));
+  } else {
+    TR.step++; updateTraceHud(); renderTrace(); pop();
+    setTraceMsg("Đúng rồi! Bước " + (TR.step + 1) + ": " + steps[TR.step].label + " — đồ theo nét đứt màu cam tiếp nhé.");
+  }
+}
+traceCanvas.addEventListener("pointerdown", function(e){
+  e.preventDefault(); TR.drawing = true;
+  try{ traceCanvas.setPointerCapture(e.pointerId); }catch(err){}
+  TR.cur = [boardPos(e, traceCanvas)];
+  renderTrace();
+});
+traceCanvas.addEventListener("pointermove", function(e){
+  if(!TR.drawing || !TR.cur) return;
+  var p = boardPos(e, traceCanvas), last = TR.cur[TR.cur.length - 1];
+  if(dist(p, last) > 0.9){ TR.cur.push(p); renderTrace(); }
+});
+["pointerup","pointercancel"].forEach(function(ev){
+  traceCanvas.addEventListener(ev, function(){
+    if(!TR.drawing) return;
+    TR.drawing = false;
+    if(TR.cur && TR.cur.length >= 1) TR.stepStrokes.push(TR.cur);
+    TR.cur = null; renderTrace();
+    if(!TR.done && TR.stepStrokes.length){
+      var prog = traceStepProgress();
+      if(prog.min >= TRACE_NEED) completeTraceStep();
+      else setTraceMsg("Chưa xong bước này đâu — " +
+        (prog.missing > 1 ? "còn " + prog.missing + " nét chưa tô đủ, " : "") +
+        "nét thiếu nhất mới tô kín khoảng " + Math.round(prog.min * 100) +
+        "%. Phải tô kín từ 90% trở lên của MỌI nét đứt trong bước mới qua được — tô nốt phần nét đứt còn trống nhé!", true);
+    }
+  });
+});
+$("btnTraceUndo").addEventListener("click", function(){
+  if(TR.stepStrokes.length){ TR.stepStrokes.pop(); renderTrace(); setTraceMsg("Đã hoàn tác 1 nét của bước này."); }
+  else setTraceMsg("Bước này chưa có nét nào để hoàn tác.", true);
+});
+$("btnTraceResetStep").addEventListener("click", function(){
+  TR.stepStrokes = []; renderTrace();
+  setTraceMsg("Đã xóa nét của bước này — đồ lại theo nét đứt màu cam nhé.");
+});
+$("btnTracePeek").addEventListener("click", function(){
+  TR.peek = !TR.peek;
+  this.textContent = TR.peek ? "Ẩn hình hoàn chỉnh" : "Xem hình hoàn chỉnh";
+  this.setAttribute("aria-pressed", TR.peek ? "true" : "false");
+  renderTrace();
+});
+$("btnTraceRestart").addEventListener("click", function(){ resetTrace(); renderTrace(); });
+/* --- Chuyển 2 phần của tab Học Vẽ --- */
+function setLearnPart(p){
+  var trace = p === "trace";
+  $("partTrace").hidden = !trace;
+  $("partSelf").hidden = trace;
+  $("subLearn").setAttribute("aria-pressed", trace ? "true" : "false");
+  $("subSelf").setAttribute("aria-pressed", trace ? "false" : "true");
+  if(trace) renderTrace(); else renderDraw();
+}
+$("subLearn").addEventListener("click", function(){ setLearnPart("trace"); });
+$("subSelf").addEventListener("click", function(){ setLearnPart("self"); });
+
+loadFigure(0);
+
+/* ================================================================
+   VẼ TỰ DO
+   ================================================================ */
+var freeCanvas = $("freeCanvas"), fctx = freeCanvas.getContext("2d");
+var FREE_COLORS = ["#2E2A24","#E4572E","#F2A007","#0E7C66","#2D7FB8","#D65076","#7A4FA3","#8A5A2B"];
+var FREE_SIZES = [{label:"Bút nhỏ", w:5, dot:7},{label:"Bút vừa", w:11, dot:13},{label:"Bút to", w:20, dot:22}];
+var FR = { color: FREE_COLORS[1], size: FREE_SIZES[1], strokes: [], drawing:false, cur:null };
+function buildFreeTools(){
+  var sw = $("swatches");
+  FREE_COLORS.forEach(function(c){
+    var b = document.createElement("button");
+    b.className = "sw"; b.type = "button"; b.style.background = c;
+    b.setAttribute("aria-label", "Màu " + c);
+    b.setAttribute("aria-pressed", c === FR.color ? "true" : "false");
+    b.addEventListener("click", function(){
+      FR.color = c;
+      sw.querySelectorAll(".sw").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    });
+    sw.appendChild(b);
+  });
+  var sz = $("sizes");
+  FREE_SIZES.forEach(function(s){
+    var b = document.createElement("button");
+    b.className = "size-btn"; b.type = "button";
+    b.setAttribute("aria-label", s.label);
+    b.setAttribute("aria-pressed", s === FR.size ? "true" : "false");
+    b.innerHTML = '<i style="width:'+s.dot+'px;height:'+s.dot+'px"></i>';
+    b.addEventListener("click", function(){
+      FR.size = s;
+      sz.querySelectorAll(".size-btn").forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    });
+    sz.appendChild(b);
+  });
+}
+function redrawFree(){
+  fctx.fillStyle = "#FFFFFF";
+  fctx.fillRect(0, 0, freeCanvas.width, freeCanvas.height);
+  fctx.lineCap = "round"; fctx.lineJoin = "round";
+  var all = FR.strokes.concat(FR.cur ? [FR.cur] : []);
+  all.forEach(function(st){
+    fctx.strokeStyle = st.color; fctx.lineWidth = st.w;
+    fctx.beginPath();
+    st.pts.forEach(function(p,i){ if(i === 0) fctx.moveTo(p[0], p[1]); else fctx.lineTo(p[0], p[1]); });
+    if(st.pts.length === 1) fctx.lineTo(st.pts[0][0] + 0.1, st.pts[0][1] + 0.1);
+    fctx.stroke();
+  });
+}
+function canvasPos(e){
+  var r = freeCanvas.getBoundingClientRect();
+  return [ (e.clientX - r.left) / r.width * freeCanvas.width, (e.clientY - r.top) / r.height * freeCanvas.height ];
+}
+freeCanvas.addEventListener("pointerdown", function(e){
+  e.preventDefault(); FR.drawing = true;
+  try{ freeCanvas.setPointerCapture(e.pointerId); }catch(err){}
+  FR.cur = { color: FR.color, w: FR.size.w, pts: [canvasPos(e)] };
+  redrawFree();
+});
+freeCanvas.addEventListener("pointermove", function(e){
+  if(!FR.drawing || !FR.cur) return;
+  var p = canvasPos(e), last = FR.cur.pts[FR.cur.pts.length-1];
+  if(Math.abs(p[0]-last[0]) + Math.abs(p[1]-last[1]) > 3){ FR.cur.pts.push(p); redrawFree(); }
+});
+["pointerup","pointercancel"].forEach(function(ev){
+  freeCanvas.addEventListener(ev, function(){
+    if(!FR.drawing) return;
+    FR.drawing = false;
+    if(FR.cur && FR.cur.pts.length){ FR.strokes.push(FR.cur); $("freeMsg").textContent = "Đã có " + FR.strokes.length + " nét vẽ. Vẽ tiếp hoặc tải ảnh về máy khi ưng ý."; }
+    FR.cur = null; redrawFree();
+  });
+});
+$("btnFreeUndo").addEventListener("click", function(){
+  FR.strokes.pop(); redrawFree();
+  $("freeMsg").textContent = FR.strokes.length ? "Đã hoàn tác 1 nét." : "Bảng trống rồi.";
+});
+$("btnFreeClear").addEventListener("click", function(){
+  FR.strokes = []; FR.cur = null; redrawFree();
+  $("freeMsg").textContent = "Đã xóa hết — bắt đầu bức tranh mới nào!";
+});
+$("btnFreeSave").addEventListener("click", function(){
+  var a = document.createElement("a");
+  a.download = "tranh-ve-tu-do.png";
+  a.href = freeCanvas.toDataURL("image/png");
+  a.click();
+  $("freeMsg").textContent = "Đã tải ảnh về máy.";
+});
+buildFreeTools();
+redrawFree();
+</script>
+</body>
+</html>
