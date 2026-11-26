@@ -6,4 +6,5 @@ set -e
 cd "$(dirname "$0")/.."
 mkdir -p assets
 base64 -d assets-b64/icon.png.b64 > assets/icon.png
+base64 -d assets-b64/debug.keystore.b64 > assets/debug.keystore
 echo "decoded assets OK"
