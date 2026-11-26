@@ -34,8 +34,8 @@ jobs:
           grep -E "compileSdkVersion|targetSdkVersion|minSdkVersion" android/variables.gradle
           grep "com.android.tools.build:gradle" android/build.gradle
           grep distributionUrl android/gradle/wrapper/gradle-wrapper.properties
-          sed -i 's/^        versionCode 1/        versionCode 1/' android/app/build.gradle
-          sed -i 's/^        versionName "1.0"/        versionName "1.0"/' android/app/build.gradle
+          sed -i 's/^        versionCode 1/        versionCode 2/' android/app/build.gradle
+          sed -i 's/^        versionName "1.0"/        versionName "1.1"/' android/app/build.gradle
           grep versionCode android/app/build.gradle
           grep versionName android/app/build.gradle
       - name: Install Android SDK 36
@@ -48,6 +48,11 @@ jobs:
         run: |
           python3 -m pip install --quiet Pillow
           python3 scripts/make-launcher-icon.py
+      - name: Install fixed debug keystore (shared with Bible Quiz / Kinh Koran, so v1.1+ install over each other)
+        run: |
+          mkdir -p ~/.android
+          cp assets/debug.keystore ~/.android/debug.keystore
+          sha256sum ~/.android/debug.keystore
       - name: Build APK
         run: |
           cd android
